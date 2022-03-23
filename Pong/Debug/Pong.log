@@ -1,4 +1,14 @@
 ﻿  main.cpp
-E:\dev\C++\MiniGameCollection\src\main.cpp(116,44): warning C4244: 'argument': conversion from 'const float' to 'unsigned int', possible loss of data
-E:\dev\C++\MiniGameCollection\src\main.cpp(116,30): warning C4244: 'argument': conversion from 'const float' to 'unsigned int', possible loss of data
+E:\dev\C++\MiniGameCollection\src\main.cpp(127,40): warning C4244: 'argument': conversion from 'int' to 'T', possible loss of data
+          with
+          [
+              T=float
+          ]
+E:\dev\C++\MiniGameCollection\src\main.cpp(127,32): warning C4244: 'argument': conversion from 'int' to 'T', possible loss of data
+          with
+          [
+              T=float
+          ]
+E:\dev\C++\MiniGameCollection\src\main.cpp(177,44): warning C4244: 'argument': conversion from 'const float' to 'unsigned int', possible loss of data
+E:\dev\C++\MiniGameCollection\src\main.cpp(177,30): warning C4244: 'argument': conversion from 'const float' to 'unsigned int', possible loss of data
   Pong.vcxproj -> E:\dev\C++\MiniGameCollection\Pong\Debug\Pong.exe
