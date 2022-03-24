@@ -167,20 +167,20 @@ public:
 	}
 
 	bool wallCollisionDetected() {
-		if (getPosition().y <= 0 || getPosition().y >= WINDOW_HEIGHT) {
+		if (getPosition().y - size.y*.5f <= 0 || getPosition().y + size.y*.5f >= WINDOW_HEIGHT) {
 			return true;
 		}
 		return false;
 	}
 
 	bool paddleCollisionDetected(Paddle& pad) {
-		if (getPosition().x >= pad.getPosition().x + pad.size.x ||
-			getPosition().x + size.x <= pad.getPosition().x ||
-			getPosition().y >= pad.getPosition().y + pad.size.y ||
-			getPosition().y + size.y <= pad.getPosition().y) {
-			pad_hit.play();
+		if (getPosition().x - size.x*.5f >= pad.getPosition().x  + pad.size.x ||
+			getPosition().x + size.x*.5f <= pad.getPosition().x ||
+			getPosition().y - size.y*.5f >= pad.getPosition().y + pad.size.y ||
+			getPosition().y + size.y*.5f <= pad.getPosition().y) {
 			return false;
-		}
+		}			
+		pad_hit.play();
 		return true;
 	}
 
