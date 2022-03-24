@@ -32,10 +32,8 @@ void normalize(sf::Vector2f& v) {
 		v = v / magnitude(v);
 }
 
-int random(int min, int max) //range : [min, max]
-{
-	srand(time(NULL)); //seeding for the first time only!
-
+int random(int min, int max) {
+	srand(time(NULL)); 
 	return min + rand() % ((max + 1) - min);
 }
 
