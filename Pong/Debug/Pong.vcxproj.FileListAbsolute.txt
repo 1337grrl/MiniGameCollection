@@ -1,1 +1,0 @@
-E:\dev\C++\MiniGameCollection\Pong\Debug\Pong.exe
