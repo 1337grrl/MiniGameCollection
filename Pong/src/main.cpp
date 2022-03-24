@@ -11,7 +11,7 @@ constexpr float PADDING = 20.f;
 enum class Side {left, right};
 
 
-enum class State {start, running, lost, won, reset};
+enum class State {start, running, reset};
 State gameState = State::start;
 
 
@@ -139,7 +139,6 @@ public:
 		initDirection();
 	}
 
-	// Something is off here...
 	void initDirection() {
 
 		int x = random(-100, 100);
@@ -183,6 +182,14 @@ public:
 
 	void changeHorizontalDirection() {
 		direction.x = -direction.x;
+		// Give it a slight randomness
+		if (direction.y < 0) {
+			direction.y = random(-70, 0) * .01;
+		}
+		else {
+			direction.y = random(0, 70) * .01;
+		}
+		normalize(direction);
 	}
 
 	void changeVerticalDirection() {
@@ -253,10 +260,8 @@ void load() {
 
 	sf::Text title = renderMsg("PONG!", sf::Vector2f(WINDOW_WIDTH * .5, PADDING), 100);
 	startScreen.push_back(title);
-	sf::Text instructions = renderMsg("Click to start Game", sf::Vector2f(WINDOW_WIDTH * .5, PADDING + 110));
+	sf::Text instructions = renderMsg("Press Enter to start Game", sf::Vector2f(WINDOW_WIDTH * .5, PADDING + 110));
 	startScreen.push_back(instructions);
-
-
 
 	leftPad.init(Side::left);
 	gameTokens.push_front(&leftPad);
@@ -280,7 +285,7 @@ void takeInput() {
 		reset();
 	}
 	if (gameState == State::start || gameState == State::reset) {
-		if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)) {
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Enter)) {
 			gameState = State::running;
 		}
 	}
@@ -318,9 +323,9 @@ void updateTokens() {
 
 void renderTokens() {
 
-	sf::Text leftScore = renderMsg(std::to_string(leftPad.score), center - sf::Vector2f(PADDING*7.f, PADDING * 5.f), 100);
+	sf::Text leftScore = renderMsg(std::to_string(leftPad.score), center - sf::Vector2f(PADDING*7.f, PADDING * 5.f), 200);
 
-	sf::Text rightScore = renderMsg(std::to_string(rightPad.score), center + sf::Vector2f(PADDING*7.f, -PADDING * 5.f), 100);
+	sf::Text rightScore = renderMsg(std::to_string(rightPad.score), center + sf::Vector2f(PADDING*7.f, -PADDING * 5.f), 200);
 
 	if (gameState == State::start) {
 		for (sf::Text t : startScreen) {
