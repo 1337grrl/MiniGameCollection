@@ -1,7 +1,7 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include <time.h>
-#include <deque>
+#include <list>
 
 sf::RenderWindow window;
 constexpr float WINDOW_WIDTH = 1024.f;
@@ -15,23 +15,13 @@ enum class State {start, running, lost, won, reset};
 State gameState = State::start;
 
 
-std::deque<sf::Text> startScreen;
-std::deque<sf::Text> inGameMessages;
+std::list<sf::Text> startScreen;
+std::list<sf::Text> inGameMessages;
 
 
-class Stats {
-public: 
 
-	int lives;
-	int points;
 
-	void reset() {
-		lives = 3;
-		points = 0;
-	}
-};
-
-// --- MAth Helpers ---
+// --- Math Helpers ---
 float magnitude(const sf::Vector2f& v) {
 	return sqrt(v.x * v.x + v.y * v.y);
 }
@@ -59,7 +49,7 @@ public:
 
 	virtual void update() {	}
 };
-// std::deque<Token> gameTokens;
+std::list<Token*> gameTokens;
 
 
 
@@ -67,7 +57,7 @@ class Paddle : public Token {
 public:
 
 	Side side;
-	Stats stats;
+	int score;
 
 	void init(const Side position) {
 
@@ -84,8 +74,7 @@ public:
 		speed = 5.f;
 
 		// Init stats
-		stats.lives = 3;
-		stats.points = 0;
+		score = 0;
 	}
 
 	void reset() {
@@ -184,7 +173,6 @@ void changeVerticalDirection() {
 	direction.y = -direction.y;
 }
 
-// Hier stimmt was nich...
 void move() {
 	sf::Vector2f position = getPosition();
 	position += direction * speed;
@@ -193,7 +181,6 @@ void move() {
 	if (wallCollisionDetected()) {
 		changeVerticalDirection();
 	}
-
 }
 
 void update() {
@@ -239,11 +226,11 @@ void load() {
 
 
 	leftPad.init(Side::left);
-	// gameTokens.push_front(leftPad);
+	gameTokens.push_front(&leftPad);
 	rightPad.init(Side::right);
-	// gameTokens.push_back(rightPad);
+	gameTokens.push_back(&rightPad);
 	ball.init();
-	// gameTokens.push_back(ball);
+	gameTokens.push_back(&ball);
 }
 
 void reset() {
@@ -279,63 +266,39 @@ void takeInput() {
 }
 
 void updateTokens() {
-	//for (Token t : gameTokens) {
-	//	t.update();
-	//}
+	for (Token* t : gameTokens) {
+		t->update();
+	}
 	takeInput();
-	ball.update();
 	if (gameState == State::running) {
 		if (ball.getPosition().x < 0) {
-			if (leftPad.stats.lives > 0) {
-				leftPad.stats.lives--;
-				reset();
-			}
-			if (leftPad.stats.lives == 0) {
-				gameState = State::lost;
-			}
+			rightPad.score++;
+			reset();
 		}
 		if (ball.getPosition().x > WINDOW_WIDTH) {
-			if (rightPad.stats.lives > 0) {
-				rightPad.stats.lives--;
-				reset();
-			}
-			if (rightPad.stats.lives == 0) {
-				gameState = State::lost;
-			}
+			leftPad.score++;
+			reset();
 		}
 	}
 
 }
 
 void renderTokens() {
-	
-	std::string leftLivesStr = "Lives: ";
-	leftLivesStr += std::to_string(leftPad.stats.lives);
-	sf::Text leftLives = renderMsg(leftLivesStr, sf::Vector2f(WINDOW_WIDTH * .3f, PADDING));	
-	sf::Text leftScore = renderMsg(std::to_string(leftPad.stats.points), center - sf::Vector2f(PADDING*5.f, PADDING * 5.f), 100);
 
-	std::string rightLivesStr = "Lives: ";
-	rightLivesStr += std::to_string(rightPad.stats.lives);
-	sf::Text rightLives = renderMsg(rightLivesStr, sf::Vector2f(WINDOW_WIDTH * .75f, PADDING));
-	sf::Text rightScore = renderMsg(std::to_string(rightPad.stats.points), center + sf::Vector2f(PADDING*5.f, -PADDING * 5.f), 100);
+	sf::Text leftScore = renderMsg(std::to_string(leftPad.score), center - sf::Vector2f(PADDING*7.f, PADDING * 5.f), 100);
+
+	sf::Text rightScore = renderMsg(std::to_string(rightPad.score), center + sf::Vector2f(PADDING*7.f, -PADDING * 5.f), 100);
 
 	if (gameState == State::start) {
 		for (sf::Text t : startScreen) {
 			window.draw(t);
 		}
 	}
-	else if (gameState != State::start) {
-		window.draw(rightLives);
-		window.draw(leftLives);
+	for (Token* t : gameTokens) {
+		window.draw(t->body);
 	}
-	//for (Token t : gameTokens) {
-	//	window.draw(t.body);
-	//}
 	window.draw(leftScore);
 	window.draw(rightScore);
-	window.draw(ball.body);
-	window.draw(leftPad.body);
-	window.draw(rightPad.body);
 }
 
 
