@@ -1,15 +1,17 @@
 ﻿  main.cpp
-E:\dev\C++\MiniGameCollection\Pong\src\main.cpp(149,13): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
-E:\dev\C++\MiniGameCollection\Pong\src\main.cpp(151,41): warning C4244: 'argument': conversion from 'int' to 'T', possible loss of data
+E:\dev\C++\MiniGameCollection\Pong\src\main.cpp(47,12): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+E:\dev\C++\MiniGameCollection\Pong\src\main.cpp(157,37): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+E:\dev\C++\MiniGameCollection\Pong\src\main.cpp(157,25): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+E:\dev\C++\MiniGameCollection\Pong\src\main.cpp(158,31): warning C4244: 'argument': conversion from 'int' to 'T', possible loss of data
           with
           [
               T=float
           ]
-E:\dev\C++\MiniGameCollection\Pong\src\main.cpp(151,28): warning C4244: 'argument': conversion from 'int' to 'T', possible loss of data
+E:\dev\C++\MiniGameCollection\Pong\src\main.cpp(158,28): warning C4244: 'argument': conversion from 'int' to 'T', possible loss of data
           with
           [
               T=float
           ]
-E:\dev\C++\MiniGameCollection\Pong\src\main.cpp(229,44): warning C4244: 'argument': conversion from 'const float' to 'unsigned int', possible loss of data
-E:\dev\C++\MiniGameCollection\Pong\src\main.cpp(229,30): warning C4244: 'argument': conversion from 'const float' to 'unsigned int', possible loss of data
+E:\dev\C++\MiniGameCollection\Pong\src\main.cpp(227,44): warning C4244: 'argument': conversion from 'const float' to 'unsigned int', possible loss of data
+E:\dev\C++\MiniGameCollection\Pong\src\main.cpp(227,30): warning C4244: 'argument': conversion from 'const float' to 'unsigned int', possible loss of data
   Pong.vcxproj -> E:\dev\C++\MiniGameCollection\Pong\Pong\Debug\Pong.exe

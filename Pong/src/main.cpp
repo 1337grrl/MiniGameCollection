@@ -42,6 +42,13 @@ void normalize(sf::Vector2f& v) {
 		v = v / magnitude(v);
 }
 
+int random(int min, int max) //range : [min, max]
+{
+	srand(time(NULL)); //seeding for the first time only!
+
+	return min + rand() % ((max + 1) - min);
+}
+
 
 class Token {
 public: 
@@ -146,19 +153,10 @@ public:
 	// Something is off here...
 	void initDirection() {
 
-		srand(time(nullptr));
-		int x = rand();
-		direction = sf::Vector2f(x, (RAND_MAX - x));
-		if (x % 4 == 0) {
-			direction.x = -direction.x;
-		}
-		else if (x % 4 == 1) {
-			direction.y = -direction.y;
-		}
-		else if (x % 4 == 2) {
-			direction.x = -direction.x;
-			direction.y = -direction.y;
-		}
+		int x = random(-100, 100);
+		int y = random(-abs(x)*.5f, abs(x)*.5f);
+		direction = sf::Vector2f(x, y);
+
 		normalize(direction);
 	}
 
@@ -311,30 +309,30 @@ void updateTokens() {
 
 void renderTokens() {
 	
-	std::string leftStatsStr = "Lives: ";
-	leftStatsStr += std::to_string(leftPad.stats.lives);
-	leftStatsStr += "\nPoints: ";
-	leftStatsStr += std::to_string(leftPad.stats.points);
-	sf::Text leftStats = renderMsg(leftStatsStr, sf::Vector2f(WINDOW_WIDTH * .3f, PADDING));	
-	
-	std::string rightStatsStr = "Lives: ";
-	rightStatsStr += std::to_string(rightPad.stats.lives);
-	rightStatsStr += "\nPoints: ";
-	rightStatsStr += std::to_string(rightPad.stats.points);
-	sf::Text rightStats = renderMsg(rightStatsStr, sf::Vector2f(WINDOW_WIDTH * .75f, PADDING));
-	
+	std::string leftLivesStr = "Lives: ";
+	leftLivesStr += std::to_string(leftPad.stats.lives);
+	sf::Text leftLives = renderMsg(leftLivesStr, sf::Vector2f(WINDOW_WIDTH * .3f, PADDING));	
+	sf::Text leftScore = renderMsg(std::to_string(leftPad.stats.points), center - sf::Vector2f(PADDING*5.f, PADDING * 5.f), 100);
+
+	std::string rightLivesStr = "Lives: ";
+	rightLivesStr += std::to_string(rightPad.stats.lives);
+	sf::Text rightLives = renderMsg(rightLivesStr, sf::Vector2f(WINDOW_WIDTH * .75f, PADDING));
+	sf::Text rightScore = renderMsg(std::to_string(rightPad.stats.points), center + sf::Vector2f(PADDING*5.f, -PADDING * 5.f), 100);
+
 	if (gameState == State::start) {
 		for (sf::Text t : startScreen) {
 			window.draw(t);
 		}
 	}
 	else if (gameState != State::start) {
-		window.draw(rightStats);
-		window.draw(leftStats);
+		window.draw(rightLives);
+		window.draw(leftLives);
 	}
 	//for (Token t : gameTokens) {
 	//	window.draw(t.body);
 	//}
+	window.draw(leftScore);
+	window.draw(rightScore);
 	window.draw(ball.body);
 	window.draw(leftPad.body);
 	window.draw(rightPad.body);
