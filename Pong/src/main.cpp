@@ -11,7 +11,7 @@ constexpr float PADDING = 20.f;
 enum class Side {left, right};
 
 
-enum class State {start, running, lost, won};
+enum class State {start, running, lost, won, reset};
 State gameState = State::start;
 
 
@@ -52,7 +52,7 @@ public:
 
 	virtual void update() {	}
 };
-std::deque<Token> gameTokens;
+// std::deque<Token> gameTokens;
 
 
 
@@ -60,6 +60,7 @@ class Paddle : public Token {
 public:
 
 	Side side;
+	Stats stats;
 
 	void init(const Side position) {
 
@@ -76,6 +77,8 @@ public:
 		speed = 5.f;
 
 		// Init stats
+		stats.lives = 3;
+		stats.points = 0;
 	}
 
 	void reset() {
@@ -114,10 +117,6 @@ public:
 	void moveDown() {
 		if (getPosition().y + size.y  < WINDOW_HEIGHT)
 			setPosition(getPosition() + sf::Vector2f(0.f, 1.f) * speed);
-	}
-
-	void update() {
-
 	}
 
 };
@@ -196,6 +195,7 @@ void move() {
 	if (wallCollisionDetected()) {
 		changeVerticalDirection();
 	}
+
 }
 
 void update() {
@@ -207,7 +207,7 @@ Ball ball;
 
 
 sf::Font inGameFont;
-sf::Text renderMsg(const std::string& msg, const sf::Font& font, const sf::Vector2f& position = sf::Vector2f(0.f, 0.f), uint8_t size = 10, sf::Color color = sf::Color::White, bool setORiginToMidpoint = true) {
+sf::Text renderMsg(const std::string& msg, const sf::Vector2f& position = sf::Vector2f(0.f, 0.f), uint8_t size = 30, const sf::Font& font= inGameFont, sf::Color color = sf::Color::White, bool setORiginToMidpoint = true) {
 	sf::Text message;
 
 	message.setString(msg.c_str());
@@ -233,23 +233,24 @@ void load() {
 		std::cerr << "Font could not be loaded." << std::endl;
 	}
 
-	sf::Text title = renderMsg("PONG!", inGameFont, sf::Vector2f(WINDOW_WIDTH * .5, PADDING), 100);
+	sf::Text title = renderMsg("PONG!", sf::Vector2f(WINDOW_WIDTH * .5, PADDING), 100);
 	startScreen.push_back(title);
-	sf::Text instructions = renderMsg("Click to start Game", inGameFont, sf::Vector2f(WINDOW_WIDTH * .5, PADDING + 110), 30);
+	sf::Text instructions = renderMsg("Click to start Game", sf::Vector2f(WINDOW_WIDTH * .5, PADDING + 110));
 	startScreen.push_back(instructions);
 
 
+
 	leftPad.init(Side::left);
-	gameTokens.push_front(leftPad);
+	// gameTokens.push_front(leftPad);
 	rightPad.init(Side::right);
-	gameTokens.push_back(rightPad);
+	// gameTokens.push_back(rightPad);
 	ball.init();
-	gameTokens.push_back(ball);
+	// gameTokens.push_back(ball);
 }
 
 void reset() {
 	if (gameState == State::running) {
-		gameState = State::start;
+		gameState = State::reset;
 	}
 	leftPad.reset();
 	rightPad.reset();
@@ -260,7 +261,7 @@ void takeInput() {
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Escape)) {
 		reset();
 	}
-	if (gameState == State::start) {
+	if (gameState == State::start || gameState == State::reset) {
 		if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)) {
 			gameState = State::running;
 		}
@@ -283,21 +284,53 @@ void updateTokens() {
 	//for (Token t : gameTokens) {
 	//	t.update();
 	//}
+	takeInput();
 	ball.update();
-	leftPad.update();
-	rightPad.update();
+	if (gameState == State::running) {
+		if (ball.getPosition().x < 0) {
+			if (leftPad.stats.lives > 0) {
+				leftPad.stats.lives--;
+				reset();
+			}
+			if (leftPad.stats.lives == 0) {
+				gameState = State::lost;
+			}
+		}
+		if (ball.getPosition().x > WINDOW_WIDTH) {
+			if (rightPad.stats.lives > 0) {
+				rightPad.stats.lives--;
+				reset();
+			}
+			if (rightPad.stats.lives == 0) {
+				gameState = State::lost;
+			}
+		}
+	}
+
 }
 
 void renderTokens() {
+	
+	std::string leftStatsStr = "Lives: ";
+	leftStatsStr += std::to_string(leftPad.stats.lives);
+	leftStatsStr += "\nPoints: ";
+	leftStatsStr += std::to_string(leftPad.stats.points);
+	sf::Text leftStats = renderMsg(leftStatsStr, sf::Vector2f(WINDOW_WIDTH * .3f, PADDING));	
+	
+	std::string rightStatsStr = "Lives: ";
+	rightStatsStr += std::to_string(rightPad.stats.lives);
+	rightStatsStr += "\nPoints: ";
+	rightStatsStr += std::to_string(rightPad.stats.points);
+	sf::Text rightStats = renderMsg(rightStatsStr, sf::Vector2f(WINDOW_WIDTH * .75f, PADDING));
+	
 	if (gameState == State::start) {
 		for (sf::Text t : startScreen) {
 			window.draw(t);
 		}
 	}
-	else if (gameState == State::running) {
-		for (sf::Text m : inGameMessages) {
-			window.draw(m);
-		}
+	else if (gameState != State::start) {
+		window.draw(rightStats);
+		window.draw(leftStats);
 	}
 	//for (Token t : gameTokens) {
 	//	window.draw(t.body);
@@ -333,14 +366,11 @@ int main()
 		}
 
 		// --- Update ---
-		//updateTokens();
-		takeInput();
-		ball.update();
+		updateTokens();
+		
 
 		// --- Render ---
 		window.clear(sf::Color::Black);
-
-		// Hier stimmt was nich!
 		renderTokens();
 		window.display();
 
