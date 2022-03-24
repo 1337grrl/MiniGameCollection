@@ -86,7 +86,7 @@ public:
 		}
 	}
 
-	sf::Vector2f getPosition() {
+	const sf::Vector2f getPosition() {
 		return body.getPosition();
 	}
 
@@ -152,41 +152,74 @@ public:
 	void reset() {
 		initDirection();
 		setPosition(center);
+		speed = 4.f;
+
 	}
 
-sf::Vector2f getPosition() {
-	return body.getPosition();
-}
+	const sf::Vector2f getPosition() {
+		return body.getPosition();
+	}
 
-void setPosition(const sf::Vector2f position) {
-	body.setPosition(position);
-}
+	void setPosition(const sf::Vector2f position) {
+		body.setPosition(position);
+	}
 
-bool wallCollisionDetected() {
-	if (getPosition().y <= 0 || getPosition().y >= WINDOW_HEIGHT) {
+	bool wallCollisionDetected() {
+		if (getPosition().y <= 0 || getPosition().y >= WINDOW_HEIGHT) {
+			return true;
+		}
+		return false;
+	}
+
+	bool paddleCollisionDetected(Paddle& pad) {
+		if (getPosition().x >= pad.getPosition().x + pad.size.x ||
+			getPosition().x + size.x <= pad.getPosition().x ||
+			getPosition().y >= pad.getPosition().y + pad.size.y ||
+			getPosition().y + size.y <= pad.getPosition().y) {
+			return false;
+		}
 		return true;
 	}
-	return false;
-}
 
-void changeVerticalDirection() {
-	direction.y = -direction.y;
-}
-
-void move() {
-	sf::Vector2f position = getPosition();
-	position += direction * speed;
-	setPosition(position);
-
-	if (wallCollisionDetected()) {
-		changeVerticalDirection();
+	void changeHorizontalDirection() {
+		direction.x = -direction.x;
 	}
-}
 
-void update() {
-	if (gameState == State::running)
-		move();
-}
+	void changeVerticalDirection() {
+		direction.y = -direction.y;
+	}
+
+	void move() {
+		sf::Vector2f position = getPosition();
+		position += direction * speed;
+		setPosition(position);
+
+	}
+
+	void update() {
+		if (gameState == State::running)
+			move();
+
+		if (wallCollisionDetected()) {
+			changeVerticalDirection();
+		}
+
+		if (paddleCollisionDetected(leftPad)) {
+			sf::Vector2f offset = getPosition();
+			offset.x + leftPad.size.x;
+			setPosition(offset);
+			changeHorizontalDirection();
+			speed *= 1.05;
+		}
+
+		if (paddleCollisionDetected(rightPad)) {
+			sf::Vector2f offset = getPosition();
+			offset.x - rightPad.size.x;
+			setPosition(offset);
+			changeHorizontalDirection();
+			speed *= 1.05;
+		}
+	}
 };
 Ball ball;
 

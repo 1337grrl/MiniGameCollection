@@ -12,6 +12,10 @@ E:\dev\C++\MiniGameCollection\Pong\src\main.cpp(147,28): warning C4244: 'argumen
           [
               T=float
           ]
-E:\dev\C++\MiniGameCollection\Pong\src\main.cpp(214,44): warning C4244: 'argument': conversion from 'const float' to 'unsigned int', possible loss of data
-E:\dev\C++\MiniGameCollection\Pong\src\main.cpp(214,30): warning C4244: 'argument': conversion from 'const float' to 'unsigned int', possible loss of data
+E:\dev\C++\MiniGameCollection\Pong\src\main.cpp(207,13): warning C4552: '+': result of expression not used
+E:\dev\C++\MiniGameCollection\Pong\src\main.cpp(210,1): warning C4305: '*=': truncation from 'double' to 'float'
+E:\dev\C++\MiniGameCollection\Pong\src\main.cpp(215,13): warning C4552: '-': result of expression not used
+E:\dev\C++\MiniGameCollection\Pong\src\main.cpp(218,1): warning C4305: '*=': truncation from 'double' to 'float'
+E:\dev\C++\MiniGameCollection\Pong\src\main.cpp(245,44): warning C4244: 'argument': conversion from 'const float' to 'unsigned int', possible loss of data
+E:\dev\C++\MiniGameCollection\Pong\src\main.cpp(245,30): warning C4244: 'argument': conversion from 'const float' to 'unsigned int', possible loss of data
   Pong.vcxproj -> E:\dev\C++\MiniGameCollection\Pong\Pong\Debug\Pong.exe
