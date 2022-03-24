@@ -1,5 +1,8 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio/Music.hpp>
+#include <SFML/Audio/Sound.hpp>
+#include <SFML/Audio/SoundBuffer.hpp>
 #include <time.h>
 #include <list>
 
@@ -11,14 +14,16 @@ constexpr float PADDING = 20.f;
 enum class Side {left, right};
 
 
-enum class State {start, running, reset};
+enum class State {start, running, won, reset};
 State gameState = State::start;
 
-
 std::list<sf::Text> startScreen;
-std::list<sf::Text> inGameMessages;
+std::string winner = "";
+sf::Text won;
 
 
+sf::Music music;
+sf::Sound pad_hit;
 
 
 // --- Math Helpers ---
@@ -173,6 +178,7 @@ public:
 			getPosition().x + size.x <= pad.getPosition().x ||
 			getPosition().y >= pad.getPosition().y + pad.size.y ||
 			getPosition().y + size.y <= pad.getPosition().y) {
+			pad_hit.play();
 			return false;
 		}
 		return true;
@@ -222,7 +228,7 @@ public:
 			offset.x - rightPad.size.x;
 			setPosition(offset);
 			changeHorizontalDirection();
-			speed *= 1.05;
+speed *= 1.05;
 		}
 	}
 };
@@ -230,7 +236,7 @@ Ball ball;
 
 
 sf::Font inGameFont;
-sf::Text renderMsg(const std::string& msg, const sf::Vector2f& position = sf::Vector2f(0.f, 0.f), uint8_t size = 30, const sf::Font& font= inGameFont, sf::Color color = sf::Color::White, bool setORiginToMidpoint = true) {
+sf::Text renderMsg(const std::string& msg, const sf::Vector2f& position = sf::Vector2f(0.f, 0.f), uint8_t size = 30, const sf::Font& font = inGameFont, sf::Color color = sf::Color::White, bool setORiginToMidpoint = true) {
 	sf::Text message;
 
 	message.setString(msg.c_str());
@@ -267,6 +273,19 @@ void load() {
 	gameTokens.push_back(&rightPad);
 	ball.init();
 	gameTokens.push_back(&ball);
+
+
+	if (!music.openFromFile("content/music.wav"))
+		std::cerr << "Could not load sound file." << std::endl;
+	music.play();
+	music.setLoop(true);
+
+
+	sf::SoundBuffer pad_hit_b;
+	if (!pad_hit_b.loadFromFile("content/pad_hit.wav")) {
+		std::cerr << "Could not load sound file." << std::endl;
+	}
+	pad_hit.setBuffer(pad_hit_b);
 }
 
 void reset() {
@@ -280,6 +299,11 @@ void reset() {
 
 void takeInput() {
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Escape)) {
+		if (gameState == State::won) {
+			gameState = State::start;
+			leftPad.score = 0;
+			rightPad.score = 0;
+		}
 		reset();
 	}
 	if (gameState == State::start || gameState == State::reset) {
@@ -292,7 +316,7 @@ void takeInput() {
 	}
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S)) {
 		leftPad.moveDown();
-	} 
+	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Up)) {
 		rightPad.moveUp();
 	}
@@ -310,10 +334,18 @@ void updateTokens() {
 		if (ball.getPosition().x < 0) {
 			rightPad.score++;
 			reset();
+			if (rightPad.score == 10) {
+				gameState = State::won;
+				winner += "Right Player won!";
+			}		
 		}
 		if (ball.getPosition().x > WINDOW_WIDTH) {
 			leftPad.score++;
 			reset();
+			if (leftPad.score == 10) {
+				gameState = State::won;
+				winner += "Left Player won!";
+			}
 		}
 	}
 
@@ -322,9 +354,11 @@ void updateTokens() {
 void renderTokens() {
 
 	sf::Text leftScore = renderMsg(std::to_string(leftPad.score), center - sf::Vector2f(PADDING*7.f, PADDING * 5.f), 200);
-
 	sf::Text rightScore = renderMsg(std::to_string(rightPad.score), center + sf::Vector2f(PADDING*7.f, -PADDING * 5.f), 200);
-
+	if (gameState == State::won) {
+		won = renderMsg(winner, sf::Vector2f(WINDOW_WIDTH * .5, PADDING), 100);
+	}
+	
 	if (gameState == State::start) {
 		for (sf::Text t : startScreen) {
 			window.draw(t);
@@ -335,6 +369,9 @@ void renderTokens() {
 	}
 	window.draw(leftScore);
 	window.draw(rightScore);
+	if (gameState == State::won) {
+		window.draw(won);
+	}
 }
 
 
