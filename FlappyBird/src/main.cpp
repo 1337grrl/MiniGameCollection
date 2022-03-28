@@ -5,7 +5,7 @@
 #include <SFML/Audio.hpp>
 #include <SFML/System/Clock.hpp>
 #include <list>
-#include <vector>
+#include <deque>
 
 
 sf::RenderWindow window;
@@ -16,7 +16,7 @@ const sf::Vector2f CENTER = sf::Vector2f(WINDOW_WIDTH * .5f, WINDOW_HEIGHT * .5f
 sf::Clock deltaClock;
 sf::Clock spawnClock;
 float delta;
-int spawnTimer;
+int frameCounter = 0;
 
 const sf::Vector2f spriteScale = sf::Vector2f(2.5f, 2.5f);
 constexpr int BACKGROUND_SPEED = 100;
@@ -56,7 +56,9 @@ public:
 TexturePack textures;
 std::list<sf::Sprite*> sprites;
 sf::Sprite background;
+constexpr int BG_WIDTH = 1032;
 sf::Sprite ground;
+int GROUND_Y_POSITION;
 
 class Bird {
 public:
@@ -84,36 +86,33 @@ Bird bird;
 
 class PipeManager {
 public:
-	std::vector<sf::Sprite> pipes;
-	const sf::Vector2u size = textures.pipe.getSize();
+	std::deque<sf::Sprite> pipes;
+	float size;
 	bool pipeJustSpawned = false;
 
 	void spawnPipe() {
 			sf::Sprite pipe;
 			pipe.setTexture(textures.pipe);
 			pipe.scale(spriteScale * .7f);
-			pipe.setPosition(sf::Vector2f(WINDOW_WIDTH, random(WINDOW_HEIGHT * .25, WINDOW_HEIGHT - 25.f)));
+			pipe.setPosition(sf::Vector2f(WINDOW_WIDTH, random(WINDOW_HEIGHT * .4, WINDOW_HEIGHT*.85f)));
 			pipes.push_back(pipe);
+			size = pipe.getLocalBounds().width;
 			pipeJustSpawned = true;
 	}
 
 	void update() {
 		for (int i = 0; i < pipes.size(); ++i) {
 			sf::Vector2f tmp = pipes[i].getPosition();
-			if (tmp.x < 0 - size.x) {
-				;
-			}
-			else {
-				pipes[i].setPosition(tmp + sf::Vector2f(-(int(PIPE_SPEED * delta) % int(WINDOW_WIDTH)), 0.f));
-			}
+			pipes[i].setPosition(tmp + sf::Vector2f(-(int(PIPE_SPEED * delta) % int(WINDOW_WIDTH)), 0.f));
+		}			
+		if (!pipes.empty() && pipes.front().getPosition().x < -size*2.f) {
+			pipes.pop_front();
 		}
 	}
 
 	void draw() {
 		for (sf::Sprite s : pipes) {
-			if (s.getPosition().x > 0 - size.x) {
-				window.draw(s);
-			}
+			window.draw(s);
 		}
 	}
 
@@ -123,17 +122,29 @@ public:
 };
 PipeManager pMgr;
 
+
 void reset() {
 
 }
 
+
 void moveBackground() {
 	sf::Vector2f backgroundScroll, groundScroll;
-	backgroundScroll = sf::Vector2f(-(int(BACKGROUND_SPEED * delta) % 1032), 0.f);
+	backgroundScroll = sf::Vector2f(-(int(BACKGROUND_SPEED * delta) % BG_WIDTH), 0.f);
 	groundScroll = sf::Vector2f(-(int(GROUND_SPEED * delta) % int(WINDOW_WIDTH)), 0.f);
 
-	background.setPosition(background.getPosition() + backgroundScroll);
-	ground.setPosition(ground.getPosition() + groundScroll);
+	if (background.getPosition().x <= -BG_WIDTH) {
+		background.setPosition(sf::Vector2f(0.f, 0.f));
+	}
+	else {
+		background.setPosition(background.getPosition() + backgroundScroll);
+	}
+	if (ground.getPosition().x <= -WINDOW_WIDTH) {
+		ground.setPosition(sf::Vector2f(0.f, GROUND_Y_POSITION));
+	}
+	else {
+		ground.setPosition(ground.getPosition() + groundScroll);
+	}
 }
 
 bool shouldReset() {
@@ -169,7 +180,8 @@ void load() {
 
 	ground.setTexture(textures.ground);
 	ground.scale(spriteScale);
-	ground.setPosition(sf::Vector2f(0.f, WINDOW_HEIGHT - ground.getLocalBounds().height * spriteScale.x));
+	GROUND_Y_POSITION = WINDOW_HEIGHT - ground.getLocalBounds().height * spriteScale.x;
+	ground.setPosition(sf::Vector2f(0.f, GROUND_Y_POSITION));
 	sprites.push_back(&ground);
 
 	bird.init();
@@ -179,22 +191,25 @@ void load() {
 
 void update() {
 	delta = deltaClock.getElapsedTime().asSeconds();
-	spawnTimer = int(spawnClock.getElapsedTime().asSeconds());
 	deltaClock.restart();
 
+	frameCounter++;
 
 	isWindowClosed();
+	
 	if (shouldReset()) {
 		reset();
 	}
 
 	moveBackground();
-	if (spawnTimer % 2 == 1 && !pMgr.pipeJustSpawned) {
+	
+	if (frameCounter % 80 == 1 && !pMgr.pipeJustSpawned) {
 		pMgr.spawnPipe();
 	}
-	else if (spawnTimer % 2 != 1 && pMgr.pipeJustSpawned) {
+	else if (frameCounter % 80 != 1 && pMgr.pipeJustSpawned) {
 		pMgr.pipeJustSpawned = false;
 	}
+	
 	bird.move();
 	pMgr.update();
 }
