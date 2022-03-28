@@ -60,6 +60,7 @@ constexpr int BG_WIDTH = 1032;
 sf::Sprite ground;
 int GROUND_Y_POSITION;
 
+
 class Bird {
 public:
 	sf::Sprite body;
@@ -68,64 +69,99 @@ public:
 		body.setTexture(textures.bird);
 		body.setOrigin(body.getLocalBounds().width * .5, body.getLocalBounds().height * .5f);
 		body.setPosition(CENTER);
-		body.scale(spriteScale);
+		body.setScale(spriteScale);
 	}
 
 	void move() {
-		sf::Vector2f tmp = body.getPosition();
-		tmp += GRAVITY * float(delta);
+
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)) {
-			tmp += ANTI_GRAVITY;
+			body.move(ANTI_GRAVITY);
 		}
-		body.setPosition(tmp);
+		body.move(GRAVITY * float(delta));
 	}
 
 };
 Bird bird;
 
 
-class PipeManager {
-public:
-	std::deque<sf::Sprite> pipes;
-	float size;
-	bool pipeJustSpawned = false;
+class Pipe {
+public: 
+	sf::Sprite upperPipe;
+	sf::Sprite lowerPipe;
 
-	void spawnPipe() {
-			sf::Sprite pipe;
-			pipe.setTexture(textures.pipe);
-			pipe.scale(spriteScale * .7f);
-			pipe.setPosition(sf::Vector2f(WINDOW_WIDTH, random(WINDOW_HEIGHT * .4, WINDOW_HEIGHT*.85f)));
-			pipes.push_back(pipe);
-			size = pipe.getLocalBounds().width;
-			pipeJustSpawned = true;
+	float pipeWidth;
+	sf::Vector2f PIPE_DISTANCE;
+
+
+	void init() {
+		sf::Vector2f pipePosition = sf::Vector2f(WINDOW_WIDTH, random(WINDOW_HEIGHT * .4, WINDOW_HEIGHT * .85f));
+		lowerPipe.setTexture(textures.pipe);
+		lowerPipe.setScale(spriteScale * .7f);
+		lowerPipe.setPosition(pipePosition);
+
+		pipeWidth = lowerPipe.getLocalBounds().width *(spriteScale.x*.7f*.5f);
+		PIPE_DISTANCE = sf::Vector2f(pipeWidth, -WINDOW_HEIGHT * .2f);
+
+		upperPipe.setTexture(textures.pipe);
+		upperPipe.setScale(spriteScale * .7f);
+		upperPipe.setPosition(pipePosition);
+		upperPipe.move(PIPE_DISTANCE*2.f);
+		upperPipe.setRotation(180);
 	}
 
-	void update() {
+	sf::Vector2f getPosition() {
+		return lowerPipe.getPosition();
+	}
+
+	void setPosition(const sf::Vector2f& p) {
+		lowerPipe.setPosition(p);
+		upperPipe.setPosition(p);
+	}
+
+	void move(const sf::Vector2f& p) {
+		upperPipe.move(p);
+		lowerPipe.move(p);
+	}
+
+	void draw() {
+		window.draw(upperPipe);
+		window.draw(lowerPipe);
+	}
+};
+
+
+class PipeManager {
+public:
+	std::deque<Pipe> pipes;
+	float pipeWidth;
+
+	void spawnPipe() {
+		if (frameCounter % 80 == 0) {
+			Pipe pipe;
+			pipe.init();
+			pipes.push_back(pipe);
+			frameCounter = 0;
+			pipeWidth = pipe.pipeWidth;
+		}
+	}
+
+	void updatePipePositions() {
 		for (int i = 0; i < pipes.size(); ++i) {
-			sf::Vector2f tmp = pipes[i].getPosition();
-			pipes[i].setPosition(tmp + sf::Vector2f(-(int(PIPE_SPEED * delta) % int(WINDOW_WIDTH)), 0.f));
+			pipes[i].move(sf::Vector2f(-(int(PIPE_SPEED * delta) % int(WINDOW_WIDTH)), 0.f));
 		}			
-		if (!pipes.empty() && pipes.front().getPosition().x < -size*2.f) {
+		if (!pipes.empty() && pipes.front().getPosition().x < -pipeWidth *2.f) {
 			pipes.pop_front();
 		}
 	}
 
-	void draw() {
-		for (sf::Sprite s : pipes) {
-			window.draw(s);
+	void drawPipes() {
+		for (Pipe s : pipes) {
+			s.draw();
 		}
 	}
 
-	void reset() {
-
-	}
 };
 PipeManager pMgr;
-
-
-void reset() {
-
-}
 
 
 void moveBackground() {
@@ -137,15 +173,45 @@ void moveBackground() {
 		background.setPosition(sf::Vector2f(0.f, 0.f));
 	}
 	else {
-		background.setPosition(background.getPosition() + backgroundScroll);
+		background.move(backgroundScroll);
 	}
 	if (ground.getPosition().x <= -WINDOW_WIDTH) {
 		ground.setPosition(sf::Vector2f(0.f, GROUND_Y_POSITION));
 	}
 	else {
-		ground.setPosition(ground.getPosition() + groundScroll);
+		ground.move(groundScroll);
 	}
 }
+
+void setupWindow() {
+	window.create(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "FLAPPY BIRD", sf::Style::Default);
+	window.setFramerateLimit(60);
+}
+
+void setupGame() {
+	textures.init();
+	background.setTexture(textures.background);
+	background.setScale(spriteScale);
+	sprites.push_back(&background);
+
+	ground.setTexture(textures.ground);
+	ground.setScale(spriteScale);
+	GROUND_Y_POSITION = WINDOW_HEIGHT - ground.getLocalBounds().height * spriteScale.x;
+	ground.setPosition(sf::Vector2f(0.f, GROUND_Y_POSITION));
+	sprites.push_back(&ground);
+
+	bird.init();
+	sprites.push_back(&bird.body);
+}
+
+void load() {
+
+	srand(time(NULL));
+
+	setupWindow();
+	setupGame();
+}
+
 
 bool shouldReset() {
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Escape)) {
@@ -165,34 +231,20 @@ void isWindowClosed() {
 	}
 }
 
-void load() {
-
-	srand(time(NULL));
-
-	window.create(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "FLAPPY BIRD", sf::Style::Default);
-	window.setFramerateLimit(60);
-
-
-	textures.init();
-	background.setTexture(textures.background);
-	background.scale(spriteScale);
-	sprites.push_back(&background);
-
-	ground.setTexture(textures.ground);
-	ground.scale(spriteScale);
-	GROUND_Y_POSITION = WINDOW_HEIGHT - ground.getLocalBounds().height * spriteScale.x;
-	ground.setPosition(sf::Vector2f(0.f, GROUND_Y_POSITION));
-	sprites.push_back(&ground);
-
-	bird.init();
-	sprites.push_back(&bird.body);
+void reset() {
+	sprites.clear();
+	pMgr.pipes.clear();
+	setupGame();
 }
 
-
-void update() {
+void getDelta() {
 	delta = deltaClock.getElapsedTime().asSeconds();
 	deltaClock.restart();
+}
 
+void update() {
+
+	getDelta();
 	frameCounter++;
 
 	isWindowClosed();
@@ -202,16 +254,9 @@ void update() {
 	}
 
 	moveBackground();
-	
-	if (frameCounter % 80 == 1 && !pMgr.pipeJustSpawned) {
-		pMgr.spawnPipe();
-	}
-	else if (frameCounter % 80 != 1 && pMgr.pipeJustSpawned) {
-		pMgr.pipeJustSpawned = false;
-	}
-	
+	pMgr.spawnPipe();	
+	pMgr.updatePipePositions();
 	bird.move();
-	pMgr.update();
 }
 
 
@@ -219,7 +264,7 @@ void render() {
 	for (sf::Sprite* s : sprites) {
 		window.draw(*s);
 	}
-	pMgr.draw();
+	pMgr.drawPipes();
 	window.display();
 }
 
