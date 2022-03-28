@@ -19,12 +19,16 @@ float delta;
 int frameCounter = 0;
 
 const sf::Vector2f spriteScale = sf::Vector2f(2.5f, 2.5f);
+
 constexpr int BACKGROUND_SPEED = 100;
 constexpr int GROUND_SPEED = 150;
 constexpr int PIPE_SPEED = 400;
 
 const sf::Vector2f GRAVITY = sf::Vector2f(0.f, 250.f);
 const sf::Vector2f ANTI_GRAVITY = sf::Vector2f(0.f, -25.f);
+
+bool scrolling = true;
+int score = 0;
 
 int random(int min, int max) {
 
@@ -37,6 +41,7 @@ public:
 	sf::Texture ground;
 	sf::Texture background;
 	sf::Texture pipe;
+	sf::Font font;
 
 	void init() {
 		if (!bird.loadFromFile("content/bird.png")) {
@@ -50,6 +55,9 @@ public:
 		}
 		if (!pipe.loadFromFile("content/pipe.png")) {
 			std::cerr << "Failed to load pipe texture." << std::endl;
+		}
+		if (!font.loadFromFile("content/font.ttf")) {
+			std::cerr << "Failed to load font." << std::endl;
 		}
 	}
 };
@@ -80,32 +88,48 @@ public:
 		body.move(GRAVITY * float(delta));
 	}
 
+	sf::Vector2f getPosition() {
+		return body.getPosition();
+	}
+
 };
 Bird bird;
 
 
-class Pipe {
+class PipePair {
 public: 
 	sf::Sprite upperPipe;
 	sf::Sprite lowerPipe;
 
 	float pipeWidth;
-	sf::Vector2f PIPE_DISTANCE;
+	float pipeHeight;
+	sf::Vector2f PIPE_GAP = sf::Vector2f(0.f, -WINDOW_HEIGHT * .4f);
+	bool birdHasPassed = false;
 
 
-	void init() {
-		sf::Vector2f pipePosition = sf::Vector2f(WINDOW_WIDTH, random(WINDOW_HEIGHT * .4, WINDOW_HEIGHT * .85f));
+	void init(const sf::Vector2f& positionPreviousPipe = sf::Vector2f(WINDOW_WIDTH, random(WINDOW_HEIGHT*.4f, WINDOW_HEIGHT*.85f))) {
+
 		lowerPipe.setTexture(textures.pipe);
-		lowerPipe.setScale(spriteScale * .7f);
+		lowerPipe.setScale(spriteScale);
+
+		pipeWidth = lowerPipe.getLocalBounds().width * (spriteScale.x);
+		pipeHeight = lowerPipe.getLocalBounds().height * (spriteScale.x);
+		PIPE_GAP.x = pipeWidth;
+
+		sf::Vector2f pipePosition;
+		float yPosition = random(positionPreviousPipe.y - pipeHeight * .5f, positionPreviousPipe.y + pipeHeight * .5f);
+		while (!(yPosition < GROUND_Y_POSITION - pipeHeight*.1f && yPosition > 100 + pipeHeight*.2f)) {
+			yPosition = random(positionPreviousPipe.y - pipeHeight * .5f, positionPreviousPipe.y + pipeHeight * .5f);
+		}
+		pipePosition = sf::Vector2f(WINDOW_WIDTH, yPosition);
+
 		lowerPipe.setPosition(pipePosition);
 
-		pipeWidth = lowerPipe.getLocalBounds().width *(spriteScale.x*.7f*.5f);
-		PIPE_DISTANCE = sf::Vector2f(pipeWidth, -WINDOW_HEIGHT * .2f);
 
 		upperPipe.setTexture(textures.pipe);
-		upperPipe.setScale(spriteScale * .7f);
+		upperPipe.setScale(spriteScale);
 		upperPipe.setPosition(pipePosition);
-		upperPipe.move(PIPE_DISTANCE*2.f);
+		upperPipe.move(PIPE_GAP);
 		upperPipe.setRotation(180);
 	}
 
@@ -127,35 +151,62 @@ public:
 		window.draw(upperPipe);
 		window.draw(lowerPipe);
 	}
+
+	bool collisionDetected() {
+		if (bird.getPosition().y < getPosition().y && bird.getPosition().y > getPosition().y + PIPE_GAP.y) {
+			return false;
+		} 
+		if (bird.getPosition().x < getPosition().x || bird.getPosition().x > getPosition().x + pipeWidth) {
+			return false;
+		}
+		return true;
+	}
 };
 
 
 class PipeManager {
 public:
-	std::deque<Pipe> pipes;
+	std::deque<PipePair> pipes;
 	float pipeWidth;
 
 	void spawnPipe() {
 		if (frameCounter % 80 == 0) {
-			Pipe pipe;
-			pipe.init();
-			pipes.push_back(pipe);
+			PipePair pipePair;
+			if (!pipes.empty())
+				pipePair.init(pipes.back().getPosition());
+			else
+				pipePair.init();
+			pipes.push_back(pipePair);
 			frameCounter = 0;
-			pipeWidth = pipe.pipeWidth;
+			pipeWidth = pipePair.pipeWidth;
 		}
 	}
 
 	void updatePipePositions() {
 		for (int i = 0; i < pipes.size(); ++i) {
 			pipes[i].move(sf::Vector2f(-(int(PIPE_SPEED * delta) % int(WINDOW_WIDTH)), 0.f));
-		}			
+		}
 		if (!pipes.empty() && pipes.front().getPosition().x < -pipeWidth *2.f) {
 			pipes.pop_front();
 		}
 	}
 
+	void update() {
+		updatePipePositions();
+		for (int i = 0; i < pipes.size(); ++i) {
+			if (pipes[i].collisionDetected()) {
+				scrolling = false;
+			}
+			else if (pipes[i].getPosition().x + pipeWidth + bird.body.getLocalBounds().width < CENTER.x && !pipes[i].birdHasPassed) {
+				score++;
+				pipes[i].birdHasPassed = true;
+			}
+		}
+	}
+
+
 	void drawPipes() {
-		for (Pipe s : pipes) {
+		for (PipePair s : pipes) {
 			s.draw();
 		}
 	}
@@ -235,6 +286,8 @@ void reset() {
 	sprites.clear();
 	pMgr.pipes.clear();
 	setupGame();
+	scrolling = true;
+	score = 0;
 }
 
 void getDelta() {
@@ -242,21 +295,32 @@ void getDelta() {
 	deltaClock.restart();
 }
 
+void displayScorce() {
+	sf::Text msg;
+
+	msg.setString(std::to_string(score));
+	msg.setFont(textures.font);
+	msg.setCharacterSize(30);
+	msg.setPosition(50.f, 50.f);
+
+	window.draw(msg);
+}
+
 void update() {
+ 	isWindowClosed();
+	if (scrolling) {
 
-	getDelta();
-	frameCounter++;
+		getDelta();
+		frameCounter++;
 
-	isWindowClosed();
-	
+		moveBackground();
+		pMgr.spawnPipe();
+		pMgr.update();
+		bird.move();
+	}		
 	if (shouldReset()) {
 		reset();
 	}
-
-	moveBackground();
-	pMgr.spawnPipe();	
-	pMgr.updatePipePositions();
-	bird.move();
 }
 
 
@@ -265,6 +329,7 @@ void render() {
 		window.draw(*s);
 	}
 	pMgr.drawPipes();
+	displayScorce();
 	window.display();
 }
 
