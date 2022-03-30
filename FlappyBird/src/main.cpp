@@ -1,3 +1,5 @@
+#pragma once
+
 #include <iostream>
 #include <stdlib.h>
 #include <time.h>
@@ -7,6 +9,12 @@
 #include <list>
 #include <deque>
 
+#include "TexturePack.h"
+#include "Bird.h"
+#include "PipePair.h"
+
+
+enum class State {start, countdown, running, score};
 
 sf::RenderWindow window;
 constexpr float WINDOW_WIDTH = 1280;
@@ -25,7 +33,7 @@ constexpr int GROUND_SPEED = 150;
 constexpr int PIPE_SPEED = 400;
 
 const sf::Vector2f GRAVITY = sf::Vector2f(0.f, 250.f);
-const sf::Vector2f ANTI_GRAVITY = sf::Vector2f(0.f, -25.f);
+const sf::Vector2f ANTI_GRAVITY = sf::Vector2f(0.f, -15.f);
 
 bool scrolling = true;
 int score = 0;
@@ -35,32 +43,6 @@ int random(int min, int max) {
 	return min + (rand() % (max - min));
 }
 
-class TexturePack {
-public:
-	sf::Texture bird;
-	sf::Texture ground;
-	sf::Texture background;
-	sf::Texture pipe;
-	sf::Font font;
-
-	void init() {
-		if (!bird.loadFromFile("content/bird.png")) {
-			std::cerr << "Failed to load bird texture." << std::endl;
-		}
-		if (!ground.loadFromFile("content/ground.png")) {
-			std::cerr << "Failed to load ground texture." << std::endl;
-		}
-		if (!background.loadFromFile("content/background.png")) {
-			std::cerr << "Failed to load background texture." << std::endl;
-		}
-		if (!pipe.loadFromFile("content/pipe.png")) {
-			std::cerr << "Failed to load pipe texture." << std::endl;
-		}
-		if (!font.loadFromFile("content/font.ttf")) {
-			std::cerr << "Failed to load font." << std::endl;
-		}
-	}
-};
 TexturePack textures;
 std::list<sf::Sprite*> sprites;
 sf::Sprite background;
@@ -69,30 +51,7 @@ sf::Sprite ground;
 int GROUND_Y_POSITION;
 
 
-class Bird {
-public:
-	sf::Sprite body;
 
-	void init() {
-		body.setTexture(textures.bird);
-		body.setOrigin(body.getLocalBounds().width * .5, body.getLocalBounds().height * .5f);
-		body.setPosition(CENTER);
-		body.setScale(spriteScale);
-	}
-
-	void move() {
-
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)) {
-			body.move(ANTI_GRAVITY);
-		}
-		body.move(GRAVITY * float(delta));
-	}
-
-	sf::Vector2f getPosition() {
-		return body.getPosition();
-	}
-
-};
 Bird bird;
 
 
@@ -300,7 +259,7 @@ void displayScorce() {
 
 	msg.setString(std::to_string(score));
 	msg.setFont(textures.font);
-	msg.setCharacterSize(30);
+	msg.setCharacterSize(50);
 	msg.setPosition(50.f, 50.f);
 
 	window.draw(msg);
