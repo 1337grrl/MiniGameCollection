@@ -6,6 +6,7 @@
 class Bird {
 public:
 	sf::Sprite bird;
+	uint16_t score;
 
 
 	Bird();
@@ -15,7 +16,7 @@ public:
 
 	void update(float delta);
 
-	void render();
+	void render(sf::RenderWindow window);
 
 private:
 	inline sf::Vector2f getPosition() { return bird.getPosition(); }

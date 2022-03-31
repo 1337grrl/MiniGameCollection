@@ -1,18 +1,37 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
-#include "states/Start.h"
+#include "TexturePack.h"
+#include "states/State.h"
+#include "states/StartState.h"
+#include "states/CountdownState.h"
+#include "states/PlayState.h"
+#include "states/ScoreState.h"
+#include "Background.h"
 
 
 class StateMachine {
 public:
-	static Start* startState;
-	static State* countDownState;
-	static State* playState;
-	static State* scoreState;
+	
+	void init(sf::RenderWindow* w, State* s);
+	void update();
+	void render();
 
-	void init();
+private:
+	State* state;
 
-	void changeState();
+	sf::Clock deltaClock;
+	float delta;
 
+	sf::RenderWindow* window;
+
+
+	TexturePack textures;
+	Background background;
+
+	const float SCALE_WIDTH = 2.5f;
+	const float SCALE_HEIGHT = 2.5f;
+	const sf::Vector2f SCALE = sf::Vector2f(SCALE_WIDTH, SCALE_HEIGHT);
+
+	void getDelta();
 };

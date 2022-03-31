@@ -19,7 +19,31 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\src\Background.cpp" />
+    <ClCompile Include="..\src\Bird.cpp" />
     <ClCompile Include="..\src\main.cpp" />
+    <ClCompile Include="..\src\Pipe.cpp" />
+    <ClCompile Include="..\src\PipePair.cpp" />
+    <ClCompile Include="..\src\StateMachine.cpp" />
+    <ClCompile Include="..\src\states\CountdownState.cpp" />
+    <ClCompile Include="..\src\states\PlayState.cpp" />
+    <ClCompile Include="..\src\states\ScoreState.cpp" />
+    <ClCompile Include="..\src\states\StartState.cpp" />
+    <ClCompile Include="..\src\states\State.cpp" />
+    <ClCompile Include="..\src\TexturePack.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\src\Background.h" />
+    <ClInclude Include="..\src\Bird.h" />
+    <ClInclude Include="..\src\Pipe.h" />
+    <ClInclude Include="..\src\PipePair.h" />
+    <ClInclude Include="..\src\StateMachine.h" />
+    <ClInclude Include="..\src\states\CountdownState.h" />
+    <ClInclude Include="..\src\states\PlayState.h" />
+    <ClInclude Include="..\src\states\ScoreState.h" />
+    <ClInclude Include="..\src\states\StartState.h" />
+    <ClInclude Include="..\src\states\State.h" />
+    <ClInclude Include="..\src\TexturePack.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
