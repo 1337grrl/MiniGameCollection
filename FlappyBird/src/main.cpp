@@ -1,31 +1,12 @@
 #pragma once
 
-#include <iostream>
-#include <stdlib.h>
-#include <time.h>
-#include <SFML/Graphics.hpp>
-#include <SFML/Audio.hpp>
-#include <SFML/System/Clock.hpp>
 #include <list>
 #include <deque>
 
-#include "TexturePack.h"
-//#include "Bird.h"
-//#include "PipePair.h"
 #include "StateMachine.h"
 
 
-
 StateMachine gStateMachine;
-
-struct States {
-	StartState start;
-	// CountdownState countdown;
-	// PlayState play;
-	// ScoreState score;
-};
-
-static States gStates;
 
 
 // --- Setting up Window ---
@@ -35,18 +16,7 @@ constexpr float WINDOW_HEIGHT = 720;
 const sf::Vector2f CENTER = sf::Vector2f(WINDOW_WIDTH * .5f, WINDOW_HEIGHT * .5f);
 
 
-// --- Setting up Textures and Fonts ---
-constexpr float SCALE_WIDTH = 2.5f;
-constexpr float SCALE_HEIGHT = 2.5f;
-const sf::Vector2f SCALE = sf::Vector2f(SCALE_WIDTH, SCALE_HEIGHT);
-
-
-
-
-// --- Clock for deltaTime --- 
-
 int frameCounter = 0;
-
 
 
 void setupWindow() {
@@ -55,7 +25,7 @@ void setupWindow() {
 }
 
 void setupGame() {
-	gStateMachine.init(&gWindow, &gStates.start);
+	gStateMachine.init(&gWindow);
 
 	//bird.init(textures.bird, CENTER, SCALE_WIDTH, SCALE_HEIGHT);
 }
@@ -73,6 +43,8 @@ int main() {
 	load();
 
 	while (gWindow.isOpen()) {
+
+		gStateMachine.handleInput();
 
 		gStateMachine.update();
 

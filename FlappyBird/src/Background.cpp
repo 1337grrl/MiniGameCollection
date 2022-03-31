@@ -1,10 +1,12 @@
 #include "Background.h"
 
+Background::Background() {}
+
 void Background::init(sf::Texture* b, sf::Texture* g) {
 	background.setTexture(*b);
 	background.setScale(SCALE);
 	ground.setTexture(*g);
-	GROUND_POSITION_Y = 720 - ground.getLocalBounds().height * scaleHeight;
+	int GROUND_POSITION_Y = 720 - ground.getLocalBounds().height * scaleHeight;
 	ground.setPosition(sf::Vector2f(0.f, GROUND_POSITION_Y));
 	ground.setScale(SCALE);
 }
@@ -12,6 +14,8 @@ void Background::init(sf::Texture* b, sf::Texture* g) {
 
 void Background::update(const float delta) {
 	const int WINDOW_WIDTH = 1280;
+	int GROUND_POSITION_Y = 720 - ground.getLocalBounds().height * scaleHeight;
+
 	sf::Vector2f backgroundScroll, groundScroll;
 	backgroundScroll = sf::Vector2f(-(int(BACKGROUND_SPEED * delta) % BACKGROUND_WIDTH), 0.f);
 	groundScroll = sf::Vector2f(-(int(GROUND_SPEED * delta) % WINDOW_WIDTH), 0.f);

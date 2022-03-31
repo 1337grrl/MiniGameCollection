@@ -1,11 +1,18 @@
 #include "StartState.h"
-#include "State.h"
+#include "../StateMachine.h"
 
 void StartState::init() {}
+
 void StartState::update(sf::RenderWindow* w, const sf::Font* f) {
 	shouldWindowClose(w);
-	
 }
+
+void StartState::handleInput() {
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)) {
+		gStateMachine.setState(StateMachine::StateNames::countdown);
+	}
+}
+
 void StartState::render(sf::RenderWindow* w, const sf::Font* f) {
 	displayStart(w, f);
 }

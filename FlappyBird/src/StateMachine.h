@@ -8,26 +8,41 @@
 #include "states/PlayState.h"
 #include "states/ScoreState.h"
 #include "Background.h"
-
+#include "Bird.h"
+#include "PipePair.h"
+#include <map>
 
 class StateMachine {
 public:
+	State* state;
+
+	// Enum + map
+	enum class StateNames { start, countdown, play, score, count };
+	std::map<StateNames, State*> states;
+	StateNames nextState = StateNames::count;
+
 	
-	void init(sf::RenderWindow* w, State* s);
+	void init(sf::RenderWindow* w);
+	void handleInput();
 	void update();
 	void render();
 
+	void registerState(StateNames sn, State* s);
+	void setState(StateNames sn);
+
+
 private:
-	State* state;
+	sf::RenderWindow* window;
 
 	sf::Clock deltaClock;
 	float delta;
 
-	sf::RenderWindow* window;
-
-
 	TexturePack textures;
+
 	Background background;
+	Bird bird;
+
+
 
 	const float SCALE_WIDTH = 2.5f;
 	const float SCALE_HEIGHT = 2.5f;
@@ -35,3 +50,5 @@ private:
 
 	void getDelta();
 };
+
+extern StateMachine gStateMachine;
