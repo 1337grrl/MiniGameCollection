@@ -29,7 +29,6 @@
     <ClCompile Include="..\src\states\PlayState.cpp" />
     <ClCompile Include="..\src\states\ScoreState.cpp" />
     <ClCompile Include="..\src\states\StartState.cpp" />
-    <ClCompile Include="..\src\states\State.cpp" />
     <ClCompile Include="..\src\TexturePack.cpp" />
   </ItemGroup>
   <ItemGroup>

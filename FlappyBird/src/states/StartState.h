@@ -7,9 +7,11 @@ public:
 
 	virtual void init();
 	virtual void handleInput();
-	virtual void update(sf::RenderWindow* w, const sf::Font* f);
-	virtual void render(sf::RenderWindow* w, const sf::Font* f);
+	virtual void update();
+	virtual void render();
 
 private:
-	void displayStart(sf::RenderWindow* w, const sf::Font* f);
+	sf::Text startMsg;
+	void initStartMsg();
+	void displayStart();
 };

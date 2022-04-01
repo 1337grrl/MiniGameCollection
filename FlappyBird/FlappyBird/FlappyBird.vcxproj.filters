@@ -45,9 +45,6 @@
     <ClCompile Include="..\src\states\ScoreState.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\states\State.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\Background.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

@@ -1,6 +1,6 @@
 #include "Bird.h"
 
-Bird::Bird() {}
+Bird::Bird() : score { 0 } {}
 Bird::~Bird() {
 	delete& bird;
 }
@@ -16,9 +16,9 @@ void Bird::init(sf::Texture t, sf::Vector2f p, float scaleWidth, float scaleHeig
 
 void Bird::update(float delta) {
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)) {
-		//bird.move(ANTI_GRAVITY);
+		bird.move(ANTI_GRAVITY);
 	}
-	//bird.move(GRAVITY * delta);
+	bird.move(GRAVITY * delta);
 }
 
 void Bird::render(sf::RenderWindow window) {

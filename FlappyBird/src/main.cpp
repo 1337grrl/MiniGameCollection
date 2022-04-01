@@ -6,14 +6,15 @@
 #include "StateMachine.h"
 
 
-StateMachine gStateMachine;
-
-
-// --- Setting up Window ---
-sf::RenderWindow gWindow;
+// --- Window Constants ---
 constexpr float WINDOW_WIDTH = 1280;
 constexpr float WINDOW_HEIGHT = 720;
-const sf::Vector2f CENTER = sf::Vector2f(WINDOW_WIDTH * .5f, WINDOW_HEIGHT * .5f);
+const sf::Vector2f WINDOW_CENTER = sf::Vector2f(WINDOW_WIDTH * .5f, WINDOW_HEIGHT * .5f);
+
+
+// --- Global Window + Global StateMachine ---
+sf::RenderWindow gWindow;
+StateMachine gStateMachine;
 
 
 int frameCounter = 0;
@@ -24,18 +25,10 @@ void setupWindow() {
 	gWindow.setFramerateLimit(60);
 }
 
-void setupGame() {
-	gStateMachine.init(&gWindow);
-
-	//bird.init(textures.bird, CENTER, SCALE_WIDTH, SCALE_HEIGHT);
-}
 
 void load() {
-
-	srand(time(NULL));
-
 	setupWindow();
-	setupGame();
+	gStateMachine.init(&gWindow);
 }
 
 
@@ -59,8 +52,7 @@ int main() {
 /*
 constexpr int PIPE_SPEED = 400;
 
-const sf::Vector2f GRAVITY = sf::Vector2f(0.f, 250.f);
-const sf::Vector2f ANTI_GRAVITY = sf::Vector2f(0.f, -15.f);
+
 
 bool scrolling = true;
 int score = 0;

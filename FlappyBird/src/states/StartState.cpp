@@ -1,10 +1,12 @@
 #include "StartState.h"
 #include "../StateMachine.h"
 
-void StartState::init() {}
 
-void StartState::update(sf::RenderWindow* w, const sf::Font* f) {
-	shouldWindowClose(w);
+void StartState::init() {
+	initStartMsg();
+}
+
+void StartState::update() {
 }
 
 void StartState::handleInput() {
@@ -13,18 +15,25 @@ void StartState::handleInput() {
 	}
 }
 
-void StartState::render(sf::RenderWindow* w, const sf::Font* f) {
-	displayStart(w, f);
+void StartState::render() {
+	displayStart();
 }
 
-void StartState::displayStart(sf::RenderWindow* w, const sf::Font* f) {
+void StartState::initStartMsg() {
 	sf::Text msg;
 
 	msg.setString("Press Space \nto start");
-	msg.setFont(*f);
+	msg.setFont(gStateMachine.textures.font);
 	msg.setCharacterSize(150);
 	msg.setOrigin(msg.getLocalBounds().width * .5f, msg.getLocalBounds().height * .5f);
-	msg.setPosition(sf::Vector2f(w->getSize())*.5f);
+	msg.setPosition(WINDOW_CENTER);
 
-	w->draw(msg);
+	startMsg = msg;
 }
+
+void StartState::displayStart() {
+
+	gWindow.draw(startMsg);
+
+}
+
