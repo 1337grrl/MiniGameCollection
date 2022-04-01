@@ -8,16 +8,14 @@ public:
 	sf::Sprite bird;
 	uint16_t score;
 
-
-
 	Bird();
 	~Bird();
 
-	void init(sf::Texture t, sf::Vector2f p, float scaleWidth, float scaleHeight);
+	void init(sf::Vector2f p, float scaleWidth, float scaleHeight);
 
 	void update(float delta);
 
-	void render(sf::RenderWindow window);
+	void render();
 
 private:
 	inline sf::Vector2f getPosition() { return bird.getPosition(); }

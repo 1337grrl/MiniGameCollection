@@ -23,7 +23,7 @@ void StartState::initStartMsg() {
 	sf::Text msg;
 
 	msg.setString("Press Space \nto start");
-	msg.setFont(gStateMachine.textures.font);
+	msg.setFont(gTextures.font);
 	msg.setCharacterSize(150);
 	msg.setOrigin(msg.getLocalBounds().width * .5f, msg.getLocalBounds().height * .5f);
 	msg.setPosition(WINDOW_CENTER);

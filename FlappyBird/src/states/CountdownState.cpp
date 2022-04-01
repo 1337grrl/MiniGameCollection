@@ -30,7 +30,7 @@ void CountdownState::displayCounter() {
 	sf::Text msg;
 
 	msg.setString(std::to_string(int(counter)));
-	msg.setFont(gStateMachine.textures.font);
+	msg.setFont(gTextures.font);
 	msg.setCharacterSize(500);
 	msg.setOrigin(msg.getLocalBounds().width * .5f, msg.getLocalBounds().height * .5f);
 	msg.setPosition(WINDOW_CENTER);
@@ -41,5 +41,5 @@ void CountdownState::displayCounter() {
 
 void CountdownState::reset() {
 	countdownClock.restart();
-	counter = 6.0f;
+	counter = 4.0f;
 }

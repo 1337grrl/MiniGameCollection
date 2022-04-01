@@ -1,9 +1,32 @@
 #include "PlayState.h"
+#include "../StateMachine.h"
 
-void PlayState::enter() {}
-void PlayState::init() {}
-void PlayState::update() {}
-void PlayState::render() {
+void PlayState::init() {
+}
+
+void PlayState::handleInput() {
 
 }
-void PlayState::exit() {}
+
+void PlayState::update() {
+
+	// Pipe spawning
+
+	// Pipe moving
+
+	// Bird moving
+	gBird.update(gStateMachine.delta);
+
+	// collision detection
+
+	// Update score
+}
+
+void PlayState::render() {
+	// Draw Pipes
+
+	// Draw bird
+	gBird.render();
+	//Draw score
+
+}

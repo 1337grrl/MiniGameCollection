@@ -9,9 +9,9 @@ public:
 
 	Background();
 
-	void init(sf::Texture* b, sf::Texture* g);
+	void init();
 	void update(const float delta);
-	void render(sf::RenderWindow* w);
+	void render();
 
 private:
 	const float scaleWidth = 2.5f;

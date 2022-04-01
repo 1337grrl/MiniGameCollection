@@ -1,15 +1,11 @@
 #include "StateMachine.h"
 
 
-void StateMachine::init(sf::RenderWindow* w) {
-	window = w;	
-	textures.init();
+void StateMachine::init() {
 	registerState(StateNames::start, new StartState());
 	registerState(StateNames::countdown, new CountdownState());
-	//registerState(StateNames::countdown, state);
-	//registerState(StateNames::play, state);	
+	registerState(StateNames::play, new PlayState());	
 	setState(StateNames::start);
-	background.init(&textures.background, &textures.ground);
 }
 
 void StateMachine::handleInput() {
@@ -17,21 +13,21 @@ void StateMachine::handleInput() {
 }
 
 void StateMachine::update() {
-	shouldWindowClose(window);
+	shouldWindowClose();
 	if (nextState != StateNames::count) {
 		setState(nextState);
 		nextState = StateNames::count;
 	}
 	getDelta();
-	background.update((const float) delta);
+	gBackground.update((const float) delta);
 	state->update();
 }
 
 void StateMachine::render() {
-	window->clear(sf::Color::Black);
-	background.render(window);
+	gWindow.clear(sf::Color::Black);
+	gBackground.render();
 	state->render();
-	window->display();
+	gWindow.display();
 }
 
 void StateMachine::getDelta() {
@@ -52,13 +48,13 @@ void StateMachine::setState(StateNames sn) {
 	}
 }
 
-void StateMachine::shouldWindowClose(sf::RenderWindow* w) {
+void StateMachine::shouldWindowClose() {
 	{
 		sf::Event e;
 
-		while (w->pollEvent(e)) {
+		while (gWindow.pollEvent(e)) {
 			if (e.type == sf::Event::Closed) {
-				w->close();
+				gWindow.close();
 			}
 		}
 	}

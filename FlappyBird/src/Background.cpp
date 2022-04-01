@@ -1,11 +1,12 @@
 #include "Background.h"
+#include "StateMachine.h"
 
 Background::Background() {}
 
-void Background::init(sf::Texture* b, sf::Texture* g) {
-	background.setTexture(*b);
+void Background::init() {
+	background.setTexture(gTextures.background);
 	background.setScale(SCALE);
-	ground.setTexture(*g);
+	ground.setTexture(gTextures.ground);
 	int GROUND_POSITION_Y = 720 - ground.getLocalBounds().height * scaleHeight;
 	ground.setPosition(sf::Vector2f(0.f, GROUND_POSITION_Y));
 	ground.setScale(SCALE);
@@ -34,7 +35,7 @@ void Background::update(const float delta) {
 	}
 }
 
-void Background::render(sf::RenderWindow* w) {
-	w->draw(background);
-	w->draw(ground);
+void Background::render() {
+	gWindow.draw(background);
+	gWindow.draw(ground);
 }

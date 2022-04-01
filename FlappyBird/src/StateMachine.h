@@ -15,15 +15,13 @@
 class StateMachine {
 public:
 	State* state;
-	TexturePack textures;
-
-	// Enum + map
 	enum class StateNames { start, countdown, play, score, count };
 	std::map<StateNames, State*> states;
 	StateNames nextState = StateNames::count;
 
+	float delta;
 	
-	void init(sf::RenderWindow* w);
+	void init();
 	void handleInput();
 	void update();
 	void render();
@@ -32,13 +30,9 @@ public:
 
 
 private:
-	sf::RenderWindow* window;
-
 	sf::Clock deltaClock;
-	float delta;
 
 
-	Background background;
 
 	const float SCALE_WIDTH = 2.5f;
 	const float SCALE_HEIGHT = 2.5f;
@@ -48,7 +42,7 @@ private:
 
 	void registerState(StateNames sn, State* s);
 
-	void shouldWindowClose(sf::RenderWindow* w);
+	void shouldWindowClose();
 
 };
 
@@ -56,3 +50,5 @@ extern sf::RenderWindow gWindow;
 extern StateMachine gStateMachine;
 extern Bird gBird;
 extern const sf::Vector2f WINDOW_CENTER;
+extern TexturePack gTextures;
+extern Background gBackground;

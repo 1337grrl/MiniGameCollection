@@ -14,10 +14,11 @@ const sf::Vector2f WINDOW_CENTER = sf::Vector2f(WINDOW_WIDTH * .5f, WINDOW_HEIGH
 
 // --- Global Window + Global StateMachine ---
 sf::RenderWindow gWindow;
+TexturePack gTextures;
+Background gBackground;
+Bird gBird;
 StateMachine gStateMachine;
 
-
-int frameCounter = 0;
 
 
 void setupWindow() {
@@ -28,7 +29,10 @@ void setupWindow() {
 
 void load() {
 	setupWindow();
-	gStateMachine.init(&gWindow);
+	gTextures.init();
+	gBackground.init();
+	gBird.init(WINDOW_CENTER, 2.5f, 2.5f);
+	gStateMachine.init();
 }
 
 
