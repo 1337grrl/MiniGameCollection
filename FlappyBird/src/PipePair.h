@@ -3,20 +3,28 @@
 #include <SFML/Graphics.hpp>
 #include "Pipe.h"
 
+extern sf::RenderWindow gWindow;
+
 class PipePair  {
 public:
 	Pipe lowerPipe;
 	Pipe upperPipe;
 	float pipeWidth;
-	float pipeGap;
 
-	PipePair();
-	~PipePair();
-
-	void init(const sf::Texture& t, float scaleWidth, float scaleHeight, const sf::Vector2f& p, float pG);
-	void update(float delta);
+	void spawn();
+	void update();
 	void render();
 
+	inline float getPositionX() { return lowerPipe.pipe.getPosition().x; }
+
 private: 
+	sf::Vector2f spawnPosition;
+	bool birdHasPassed = false;
+	const float pipeSpeed = -5;
+	float pipeGap = gWindow.getSize().y * .4f;
+
 	void rotate(Pipe& p);
+	void calculateSpawnPosition();
+	void move();
+	int random(int min, int max);
 };

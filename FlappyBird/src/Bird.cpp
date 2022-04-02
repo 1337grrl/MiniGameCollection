@@ -2,15 +2,13 @@
 #include "StateMachine.h"
 
 Bird::Bird() : score { 0 } {}
-Bird::~Bird() {
-	delete& bird;
-}
 
-void Bird::init(sf::Vector2f p, float scaleWidth, float scaleHeight) {
+
+void Bird::init() {
 	bird.setTexture(gTextures.bird);
-	bird.setScale(sf::Vector2f(scaleWidth, scaleHeight));
-	bird.setOrigin(bird.getLocalBounds().width * .5, bird.getLocalBounds().height * .5f);
-	bird.setPosition(p);
+	bird.setScale(gTextures.SCALE);
+	bird.setOrigin(bird.getLocalBounds().width * .5f, bird.getLocalBounds().height * .5f);
+	bird.setPosition(WINDOW_CENTER);
 
 	score = 0;
 }

@@ -9,9 +9,8 @@ public:
 	uint16_t score;
 
 	Bird();
-	~Bird();
 
-	void init(sf::Vector2f p, float scaleWidth, float scaleHeight);
+	void init();
 
 	void update(float delta);
 

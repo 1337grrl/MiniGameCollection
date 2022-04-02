@@ -6,8 +6,8 @@ class Pipe {
 public:
 	sf::Sprite pipe;
 
-	Pipe();
-	~Pipe();
 
-	void init(const sf::Texture& t, float scaleWidth, float scaleHeight, const sf::Vector2f& p);
+	void init(sf::Vector2f& p);
+	void move(float x);
+	void draw();
 };

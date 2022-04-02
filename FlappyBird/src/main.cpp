@@ -6,7 +6,7 @@
 #include "StateMachine.h"
 
 
-// --- Window Constants ---
+// --- Constants ---
 constexpr float WINDOW_WIDTH = 1280;
 constexpr float WINDOW_HEIGHT = 720;
 const sf::Vector2f WINDOW_CENTER = sf::Vector2f(WINDOW_WIDTH * .5f, WINDOW_HEIGHT * .5f);
@@ -31,7 +31,7 @@ void load() {
 	setupWindow();
 	gTextures.init();
 	gBackground.init();
-	gBird.init(WINDOW_CENTER, 2.5f, 2.5f);
+	gBird.init();
 	gStateMachine.init();
 }
 
@@ -54,24 +54,13 @@ int main() {
 
 
 /*
-constexpr int PIPE_SPEED = 400;
 
-
-
-bool scrolling = true;
 int score = 0;
 
 int random(int min, int max) {
 
 	return min + (rand() % (max - min));
 }
-
-TexturePack textures;
-
-
-
-
-Bird bird;
 
 
 class PipePair {

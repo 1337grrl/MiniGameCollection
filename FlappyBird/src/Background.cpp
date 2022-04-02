@@ -1,21 +1,19 @@
 #include "Background.h"
 #include "StateMachine.h"
 
-Background::Background() {}
 
 void Background::init() {
 	background.setTexture(gTextures.background);
-	background.setScale(SCALE);
+	background.setScale(gTextures.SCALE);
 	ground.setTexture(gTextures.ground);
-	int GROUND_POSITION_Y = 720 - ground.getLocalBounds().height * scaleHeight;
+	GROUND_POSITION_Y = 720.f - ground.getLocalBounds().height * gTextures.scaleHeight;
 	ground.setPosition(sf::Vector2f(0.f, GROUND_POSITION_Y));
-	ground.setScale(SCALE);
+	ground.setScale(gTextures.SCALE);
 }
 
 
 void Background::update(const float delta) {
 	const int WINDOW_WIDTH = 1280;
-	int GROUND_POSITION_Y = 720 - ground.getLocalBounds().height * scaleHeight;
 
 	sf::Vector2f backgroundScroll, groundScroll;
 	backgroundScroll = sf::Vector2f(-(int(BACKGROUND_SPEED * delta) % BACKGROUND_WIDTH), 0.f);

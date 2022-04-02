@@ -6,6 +6,8 @@ void StateMachine::init() {
 	registerState(StateNames::countdown, new CountdownState());
 	registerState(StateNames::play, new PlayState());	
 	setState(StateNames::start);
+
+	std::srand(time(NULL));
 }
 
 void StateMachine::handleInput() {
