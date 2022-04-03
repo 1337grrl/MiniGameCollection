@@ -4,11 +4,23 @@
 void ScoreState::init() {	
 }
 
-void ScoreState::handleInput() {}
+void ScoreState::handleInput() {
+	if (resetEnabled && sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)) {
+		gStateMachine.setState(StateMachine::StateNames::countdown);
+		scoreMsgInitialised = false;
+		frameCounter = 0;
+		resetEnabled = false;
+	}
+}
 
 void ScoreState::update() {	
+	frameCounter++;
+	if (frameCounter >= 60) {
+		resetEnabled = true;
+	}
 	if (!scoreMsgInitialised) {
 		initScoreMsg();
+		scoreMsgInitialised = true;
 	}
 }
 

@@ -1,6 +1,7 @@
 #include "PlayState.h"
 #include "../StateMachine.h"
 
+
 void PlayState::init() {
 }
 
@@ -43,6 +44,7 @@ void PlayState::update() {
 		}
 	} 
 	// Update score
+	updateScoreDisplay();
 }
 
 void PlayState::render() {
@@ -54,6 +56,7 @@ void PlayState::render() {
 	// Draw bird
 	gBird.render();
 	//Draw score
+	gWindow.draw(currentScore);
 
 }
 
@@ -61,4 +64,16 @@ void PlayState::reset() {
 	pairs.clear();
 	collisionDetected = false;
 	gScore = 0;
+	gBird.bird.setPosition(WINDOW_CENTER);
+}
+
+void PlayState::updateScoreDisplay() {
+	sf::Text msg;
+
+	msg.setString(std::to_string(gScore));
+	msg.setFont(gTextures.font);
+	msg.setCharacterSize(150);
+	msg.setPosition(50.f, 50.f);
+
+	currentScore = msg;
 }

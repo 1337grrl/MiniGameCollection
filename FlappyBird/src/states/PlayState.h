@@ -17,6 +17,9 @@ public:
 	virtual void render();
 
 private:
+	sf::Text currentScore;
 	bool collisionDetected = false;
+	
 	void reset();
+	void updateScoreDisplay();
 };

@@ -12,6 +12,9 @@ public:
 
 private:
 	sf::Text scoreMsg;
+
+	int frameCounter = 0;
+	bool resetEnabled = false;
 	bool scoreMsgInitialised = false;
 	void initScoreMsg();
 };

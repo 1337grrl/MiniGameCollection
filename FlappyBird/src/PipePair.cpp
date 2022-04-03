@@ -37,6 +37,10 @@ void PipePair::calculateSpawnPosition() {
 void PipePair::move() {
 	lowerPipe.move(pipeSpeed);
 	upperPipe.move(pipeSpeed);
+	if (getPositionX() + pipeWidth + gBird.bird.getLocalBounds().width < WINDOW_CENTER.x && !birdHasPassed) {
+		gScore++;
+		birdHasPassed = true;
+	}
 }
 
 int PipePair::random(int min, int max) {
