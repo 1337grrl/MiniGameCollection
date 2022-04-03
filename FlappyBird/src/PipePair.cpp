@@ -2,6 +2,8 @@
 #include "StateMachine.h"
 
 
+extern const float WINDOW_WIDTH = 1280;
+extern const float WINDOW_HEIGHT = 720;
 
 void PipePair::spawn() {
 	calculateSpawnPosition();
@@ -29,7 +31,7 @@ void PipePair::rotate(Pipe& p) {
 
 
 void PipePair::calculateSpawnPosition() {
-	spawnPosition = sf::Vector2f(gWindow.getSize().x, random(gWindow.getSize().y*.35f, gWindow.getSize().y*.85f));
+	spawnPosition = sf::Vector2f(WINDOW_WIDTH, random(WINDOW_HEIGHT*.35f, WINDOW_HEIGHT *.85f));
 }
 
 void PipePair::move() {
@@ -40,3 +42,5 @@ void PipePair::move() {
 int PipePair::random(int min, int max) {
 	return min + (rand() % (max - min));
 }
+
+sf::Vector2f PipePair::getPosition() { return lowerPipe.pipe.getPosition(); }

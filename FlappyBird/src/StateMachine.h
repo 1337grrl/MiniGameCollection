@@ -52,3 +52,4 @@ extern Bird gBird;
 extern const sf::Vector2f WINDOW_CENTER;
 extern TexturePack gTextures;
 extern Background gBackground;
+extern int gScore;

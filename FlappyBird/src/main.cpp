@@ -6,18 +6,19 @@
 #include "StateMachine.h"
 
 
-// --- Constants ---
-constexpr float WINDOW_WIDTH = 1280;
-constexpr float WINDOW_HEIGHT = 720;
+// --- Window Constants ---
+const float WINDOW_WIDTH = 1280;
+const float WINDOW_HEIGHT = 720;
 const sf::Vector2f WINDOW_CENTER = sf::Vector2f(WINDOW_WIDTH * .5f, WINDOW_HEIGHT * .5f);
 
 
-// --- Global Window + Global StateMachine ---
+// --- Global Variables ---
 sf::RenderWindow gWindow;
 TexturePack gTextures;
 Background gBackground;
 Bird gBird;
 StateMachine gStateMachine;
+int gScore;
 
 
 

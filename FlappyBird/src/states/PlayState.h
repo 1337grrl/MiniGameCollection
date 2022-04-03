@@ -15,4 +15,8 @@ public:
 	virtual void handleInput();
 	virtual void update();
 	virtual void render();
+
+private:
+	bool collisionDetected = false;
+	void reset();
 };

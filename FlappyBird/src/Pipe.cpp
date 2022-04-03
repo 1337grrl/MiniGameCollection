@@ -9,7 +9,7 @@ void Pipe::init(sf::Vector2f& p) {
 }
 
 void Pipe::move(float x) {
-	pipe.move(x, 0.f);
+	pipe.move(x * gStateMachine.delta, 0.f);
 }
 
 void Pipe::draw() {

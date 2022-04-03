@@ -10,18 +10,19 @@ public:
 	Pipe lowerPipe;
 	Pipe upperPipe;
 	float pipeWidth;
+	float pipeGap = gWindow.getSize().y * .4f;
 
 	void spawn();
 	void update();
 	void render();
 
-	inline float getPositionX() { return lowerPipe.pipe.getPosition().x; }
+	float getPositionX() { return lowerPipe.pipe.getPosition().x; }
+	sf::Vector2f getPosition();
 
 private: 
 	sf::Vector2f spawnPosition;
 	bool birdHasPassed = false;
-	const float pipeSpeed = -5;
-	float pipeGap = gWindow.getSize().y * .4f;
+	const float pipeSpeed = -350;
 
 	void rotate(Pipe& p);
 	void calculateSpawnPosition();

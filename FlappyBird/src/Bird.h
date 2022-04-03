@@ -2,6 +2,7 @@
 
 #include <SFML/Graphics.hpp>
 #include "TexturePack.h"
+#include "PipePair.h"
 
 class Bird {
 public:
@@ -15,6 +16,8 @@ public:
 	void update(float delta);
 
 	void render();
+
+	bool collisionDetected(PipePair& p);
 
 private:
 	inline sf::Vector2f getPosition() { return bird.getPosition(); }

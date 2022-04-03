@@ -23,3 +23,13 @@ void Bird::update(float delta) {
 void Bird::render() {
 	gWindow.draw(bird);
 }
+
+bool Bird::collisionDetected(PipePair& p) {
+	if (bird.getPosition().y < p.getPosition().y && bird.getPosition().y > p.getPosition().y - p.pipeGap) {
+		return false;
+	}
+ 	if (bird.getPosition().x < p.getPosition().x || bird.getPosition().x > p.getPosition().x + p.pipeWidth) {
+		return false;
+	}
+  	return true;
+}

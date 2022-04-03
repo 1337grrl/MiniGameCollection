@@ -9,6 +9,9 @@ void PlayState::handleInput() {
 }
 
 void PlayState::update() {
+	if (collisionDetected) {
+		reset();
+	}
 
 	// Pipe spawning
 	if (frameCounter % 60 == 0) {
@@ -16,21 +19,29 @@ void PlayState::update() {
 		pair.spawn();
 		pairs.push_back(pair);
 		frameCounter = 0;
+
 	}
 	frameCounter++;
 
 	// Pipe moving
 	for (size_t i = 0; i < pairs.size(); ++i) {
  		pairs[i].update();
-		if (!pairs.empty() && pairs.front().getPositionX() < - pairs[i].pipeWidth * 2.f) {
+		if (!pairs.empty() && pairs.front().getPositionX() < -pairs[i].pipeWidth) {
 			pairs.pop_front();
 		}
 	}
+
 	// Bird moving
 	gBird.update(gStateMachine.delta);
 
-	// collision detection
+	// collision detection		
 
+	for (size_t i = 0; i < pairs.size(); ++i) {
+ 		if (gBird.collisionDetected(pairs[i])) {
+			collisionDetected = true;
+			gStateMachine.setState(StateMachine::StateNames::countdown);
+		}
+	} 
 	// Update score
 }
 
@@ -44,4 +55,10 @@ void PlayState::render() {
 	gBird.render();
 	//Draw score
 
+}
+
+void PlayState::reset() {
+	pairs.clear();
+	collisionDetected = false;
+	gScore = 0;
 }
