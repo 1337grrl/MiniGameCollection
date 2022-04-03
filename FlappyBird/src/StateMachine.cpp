@@ -4,7 +4,8 @@
 void StateMachine::init() {
 	registerState(StateNames::start, new StartState());
 	registerState(StateNames::countdown, new CountdownState());
-	registerState(StateNames::play, new PlayState());	
+	registerState(StateNames::play, new PlayState());
+	registerState(StateNames::score, new ScoreState());
 	setState(StateNames::start);
 
 	std::srand(time(NULL));

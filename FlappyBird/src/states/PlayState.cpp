@@ -39,7 +39,7 @@ void PlayState::update() {
 	for (size_t i = 0; i < pairs.size(); ++i) {
  		if (gBird.collisionDetected(pairs[i])) {
 			collisionDetected = true;
-			gStateMachine.setState(StateMachine::StateNames::countdown);
+ 			gStateMachine.setState(StateMachine::StateNames::score);
 		}
 	} 
 	// Update score

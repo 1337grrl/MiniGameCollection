@@ -1,10 +1,17 @@
 #include "ScoreState.h"
 #include "../StateMachine.h"
 
-void ScoreState::init() {
-	initScoreMsg();
+void ScoreState::init() {	
 }
-void ScoreState::update() {}
+
+void ScoreState::handleInput() {}
+
+void ScoreState::update() {	
+	if (!scoreMsgInitialised) {
+		initScoreMsg();
+	}
+}
+
 void ScoreState::render() {
 	gBird.render();
 	gWindow.draw(scoreMsg);
@@ -13,7 +20,7 @@ void ScoreState::render() {
 void ScoreState::initScoreMsg() {
 	sf::Text msg;
 
-	std::string message = "GAME OVER!\n";
+	std::string message = "GAME OVER!\nSCORE: ";
 	message += std::to_string(gScore);
 	msg.setString(message);
 	msg.setFont(gTextures.font);
