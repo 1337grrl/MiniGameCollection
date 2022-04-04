@@ -2,12 +2,17 @@
 
 #include <SFML/Graphics.hpp>
 
+enum class RETURN_VALUE {SUCCESS, FAILURE};
+
 class Window {
 public:
-	Window();
+	Window(float w, float h);
 	~Window();
 
+	RETURN_VALUE init();
+
 private: 
-	const float m_WINDOW_WIDTH = 1280;
-	const float m_WINDOW_HEIGHT = 720;
+	std::unique_ptr<sf::RenderWindow> m_Window;
+	const float m_WINDOW_WIDTH;
+	const float m_WINDOW_HEIGHT;
 };
